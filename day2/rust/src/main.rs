@@ -14,12 +14,12 @@ struct Cli {
     input_file_path: std::path::PathBuf,
 }
 
-fn parse_input(reader: BufReader<File>) -> HashMap<String, i32> {
+fn parse_input_part1(lines: &Vec<Result<String, std::io::Error>>) -> HashMap<String, i32> {
     let mut data = HashMap::from([
         ("horizontal".to_string(), 0 as i32),
         ("vertical".to_string(), 0 as i32),
     ]);
-    for line in reader.lines() {
+    for line in lines.into_iter() {
         match line {
             Ok(content) => {
                 let mut ele = content.split_whitespace();
@@ -35,6 +35,43 @@ fn parse_input(reader: BufReader<File>) -> HashMap<String, i32> {
                         } else if s == "down" {
                             data.entry("vertical".to_string())
                                 .and_modify(|val| *val += distance);
+                        } else {
+                            println!("Data invalid, which is {}", s);
+                        }
+                    }
+                    None => continue,
+                }
+            }
+            Err(e) => {
+                println!("Problem reading file line with error {:?}", e);
+                break;
+            }
+        }
+    }
+    return data;
+}
+fn parse_input_part2(lines: &Vec<Result<String, std::io::Error>>) -> HashMap<String, i32> {
+    let mut data = HashMap::from([
+        ("horizontal".to_string(), 0 as i32),
+        ("vertical".to_string(), 0 as i32),
+    ]);
+    let mut aim: i32 = 0;
+    for line in lines.into_iter() {
+        match line {
+            Ok(content) => {
+                let mut ele = content.split_whitespace();
+                match ele.next() {
+                    Some(s) => {
+                        let distance = ele.next().unwrap().parse::<i32>().unwrap();
+                        if s == "forward" {
+                            data.entry("horizontal".to_string())
+                                .and_modify(|val| *val += distance);
+                            data.entry("vertical".to_string())
+                                .and_modify(|val| *val += distance * aim);
+                        } else if s == "up" {
+                            aim -= distance;
+                        } else if s == "down" {
+                            aim += distance;
                         } else {
                             println!("Data invalid, which is {}", s);
                         }
@@ -69,27 +106,48 @@ fn main() -> Result<(), std::io::Error> {
     println!("input file path is {}", full_path.display());
     let file = File::open(full_path).expect("Something went wrong when reading file.");
     let reader = BufReader::new(file);
+    let lines: Vec<_> = reader.lines().collect();
 
-    let result = calculate_result(parse_input(reader));
+    let part1_result = calculate_result(parse_input_part1(&lines));
+    let part2_result = calculate_result(parse_input_part2(&lines));
+
     println!(
-        "Multiply of horizontal and vertical movements are: {}",
-        result.to_string().red().bold()
+        "Part1: Multiply of horizontal and vertical movements are: {}",
+        part1_result.to_string().red().bold()
+    );
+    println!(
+        "Part2: Multiply of horizontal and vertical movements are: {}",
+        part2_result.to_string().blue().bold()
     );
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use std::{path::PathBuf, fs::File, io::BufReader};
+    use std::{
+        fs::File,
+        io::{BufRead, BufReader},
+        path::PathBuf,
+    };
 
-    use crate::{calculate_result, parse_input};
+    use crate::{calculate_result, parse_input_part1, parse_input_part2};
 
     #[test]
-    fn with_test_input() {
+    fn part1_with_test_input() {
         let path = PathBuf::from("../resources/test_input.txt");
         let file = File::open(path).expect("Some thing went wrong while reading input file");
         let reader = BufReader::new(file);
+        let lines: Vec<_> = reader.lines().collect();
 
-        assert_eq!(150, calculate_result(parse_input(reader)));
+        assert_eq!(150, calculate_result(parse_input_part1(&lines)));
+    }
+
+    #[test]
+    fn part2_with_test_input() {
+        let path = PathBuf::from("../resources/test_input.txt");
+        let file = File::open(path).expect("Some thing went wrong while reading input file");
+        let reader = BufReader::new(file);
+        let lines: Vec<_> = reader.lines().collect();
+        assert_eq!(900, calculate_result(parse_input_part2(&lines)));
     }
 }
