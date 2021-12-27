@@ -11,7 +11,7 @@ struct Cli {
     input_file_path: std::path::PathBuf,
 }
 
-fn calculate(reader: BufReader<File>) -> i32 {
+fn calculate_part_1(reader: BufReader<File>) -> i32 {
     let mut data: Vec<u32> = Vec::new();
     let mut counter = 0;
     for line in reader.lines() {
@@ -35,11 +35,11 @@ fn main() -> Result<(), std::io::Error> {
     let file = File::open(env_path).expect("Some thing went wrong while reading input file");
     let reader = BufReader::new(file);
 
-    let counter = calculate(reader);
+    let counter_part1 = calculate_part_1(reader);
 
     println!(
-        "The measurement incresed {} times!",
-        counter.to_string().red().bold()
+        "Part1: The measurement incresed {} times!",
+        counter_part1.to_string().red().bold()
     );
 
     Ok(())
@@ -51,14 +51,14 @@ mod tests {
     use std::fs::File;
     use std::path::PathBuf;
 
-    use crate::calculate;
+    use crate::calculate_part_1;
 
     #[test]
-    fn with_test_input() {
+    fn part1_with_test_input() {
         let path = PathBuf::from("../resources/test_input.txt");
         let file = File::open(path).expect("Some thing went wrong while reading input file");
         let reader = BufReader::new(file);
 
-        assert_eq!(calculate(reader), 7);
+        assert_eq!(calculate_part_1(reader), 7);
     }
 }
