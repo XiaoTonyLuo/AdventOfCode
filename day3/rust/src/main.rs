@@ -84,6 +84,7 @@ fn calculate_result_part2(data: &Vec<String>) -> i32 {
 }
 
 fn main() {
+    let start = std::time::Instant::now();
     let arg = Cli::from_args();
     let input_file_path = arg.input_file_path;
     let mut full_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -103,6 +104,8 @@ fn main() {
 
     println!("The part 1 result is {}", result_part1.to_string().red());
     println!("The part 1 result is {}", result_part2.to_string().blue());
+    let elapsed = start.elapsed();
+    println!("Time consumption: {:?}", elapsed);
 }
 
 #[cfg(test)]
