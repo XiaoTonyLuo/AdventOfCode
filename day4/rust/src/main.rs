@@ -186,7 +186,7 @@ fn main() {
 mod tests {
     use std::path::PathBuf;
 
-    use crate::{process_each_move_part1, read_data};
+    use crate::{process_each_move_part1, read_data, process_each_move_part2};
 
     #[test]
     fn part1_test() {
@@ -199,5 +199,18 @@ mod tests {
 
         let data = read_data(full_path);
         assert_eq!(4512, process_each_move_part1(&data));
+    }
+
+    #[test]
+    fn part2_test() {
+        let mut full_path = PathBuf::from("../resources/test_input.txt");
+
+        match full_path.canonicalize() {
+            Ok(canonicalized) => full_path = canonicalized,
+            Err(e) => panic!("Problem with canonical full path with error: {}.", e),
+        }
+
+        let data = read_data(full_path);
+        assert_eq!(1924, process_each_move_part2(&data));
     }
 }
