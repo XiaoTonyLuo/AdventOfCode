@@ -159,6 +159,7 @@ fn process_each_move_part2(data: &Data) -> i32 {
     0
 }
 fn main() {
+    let start = std::time::Instant::now();
     let input_path = Cli::from_args().input_file_path;
     let mut full_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     full_path.push(input_path);
@@ -180,13 +181,15 @@ fn main() {
         "The result of part 2 is: {}",
         result_part2.to_string().blue().bold()
     );
+
+    println!("Time consumption: {:?}", start.elapsed());
 }
 
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
 
-    use crate::{process_each_move_part1, read_data, process_each_move_part2};
+    use crate::{process_each_move_part1, process_each_move_part2, read_data};
 
     #[test]
     fn part1_test() {
