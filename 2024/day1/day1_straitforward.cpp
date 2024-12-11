@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 std::array<int, 1000> left = {
     77710, 22632, 82229, 35788, 84000, 28350, 15185, 59530, 38142, 53694, 38645,
@@ -211,7 +212,7 @@ int first_half() {
 }
 
 #include <map>
-int second_half() {
+auto second_half_v1() {
     std::map<int, int> left_map;
     std::map<int, int> right_map;
 
@@ -231,7 +232,7 @@ int second_half() {
         }
     });
 
-    int similarity{0};
+    long long similarity{0};
     std::for_each(left_map.begin(), left_map.end(),
                   [&right_map, &similarity](auto it) {
                       auto [ele, repeat] = it;
@@ -245,7 +246,27 @@ int second_half() {
     return similarity;
 }
 
+auto second_half_v2() {
+    std::map<int, int> repeat;
+
+    for (auto ele : right) {
+        repeat[ele]++;
+    }
+
+    long long similarity = 0;
+    for (auto ele : left) {
+        similarity += ele * repeat[ele];
+
+    }
+
+    return similarity;
+}
+
 int main() {
-    std::cout << "First half result = " << first_half() << std::endl;
-    std::cout << "Second half result = " << second_half() << std::endl;
+    auto first_result = first_half();
+    std::cout << "First half result = " << first_result << std::endl;
+
+    auto second_result = second_half_v1();
+    std::cout << "Second half result = " << second_result << std::endl;
+    assert(second_half_v2() == second_result);
 }
